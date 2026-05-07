@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧅 Shrek's Swamp - Interactive Adventure 🧅</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #86efac, #bef264);
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #166534;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: #235e2a;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 4px solid #166534;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #166534;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #235e2a;
+            margin-bottom: 10px;
+        }
+
+        /* Song Cards */
+        .song-item {
+            background: #fef3c7;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 5px solid #f59e0b;
+            transition: all 0.3s;
+        }
+
+        .song-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .song-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .song-artist {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .song-lyric {
+            margin-top: 8px;
+            color: #555;
+            border-left: 3px solid #f59e0b;
+            padding-left: 10px;
+        }
+
+        /* Quiz */
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .question {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #166534;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .btn-answer {
+            background: #166534;
+            color: white;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .btn-answer:hover {
+            background: #235e2a;
+            transform: scale(1.02);
+        }
+
+        .btn-answer:active {
+            transform: scale(0.98);
+        }
+
+        .btn-restart {
+            background: #fbbf24;
+            color: #1f2937;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        .btn-restart:hover {
+            background: #f59e0b;
+        }
+
+        .message {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+            min-height: 30px;
+            animation: pulse 0.6s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .correct {
+            color: #10b981;
+        }
+
+        .wrong {
+            color: #ef4444;
+        }
+
+        /* Fly Game */
+        .fly-game {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .fly-emoji {
+            font-size: 8rem;
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.1s;
+            user-select: none;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .fly-emoji:active {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        .fly-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #166534;
+            margin-top: 20px;
+        }
+
+        .fly-instructions {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #235e2a;
+        }
+
+        /* Catch Phrases */
+        .phrase-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #f59e0b;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .phrase-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .phrase-character {
+            font-weight: bold;
+            color: #166534;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .phrase-text {
+            font-size: 1.1rem;
+            color: #1f2937;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* Ogre Facts */
+        .fact-card {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #ec4899;
+        }
+
+        .fact-card h3 {
+            color: #be185d;
+        }
+
+        /* Donkey Facts */
+        .donkey-card {
+            background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #6366f1;
+        }
+
+        .donkey-card h3 {
+            color: #4338ca;
+        }
+
+        /* Memory Game */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #86efac 0%, #6ee7b7 100%);
+            border: 3px solid #166534;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .memory-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .memory-card.flipped {
+            background: #fef3c7;
+        }
+
+        .memory-card.locked {
+            pointer-events: none;
+        }
+
+        .memory-score {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #166534;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .fly-emoji {
+                font-size: 6rem;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #235e2a;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧅 Welcome to Shrek's Swamp 🧅</h1>
+            <p class="tagline">Interactive Games, Music, and Catch Phrases from the Legend!</p>
+        </header>
+
+        <!-- Games and Music Section -->
+        <div class="grid grid-2">
+            <!-- Karaoke Section -->
+            <div class="card">
+                <h2>🎤 Swamp Karaoke</h2>
+                <p style="margin-bottom: 15px; color: #555;">Classic Shrek Soundtrack Songs</p>
+                <div id="songs-container"></div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="card">
+                <h2>🧠 Ogre Quiz</h2>
+                <div id="quiz" class="quiz-container active">
+                    <div class="question" id="question"></div>
+                    <div class="options" id="options"></div>
+                    <div class="message" id="message"></div>
+                </div>
+                <div id="quiz-results" class="quiz-container" style="text-align: center;">
+                    <h3 style="margin-bottom: 20px;">Your Final Score</h3>
+                    <div style="font-size: 3rem; font-weight: bold; color: #166534; margin-bottom: 15px;">
+                        <span id="final-score">0</span>/<span id="total-questions">0</span>
+                    </div>
+                    <p id="score-message" style="font-size: 1.1rem; margin-bottom: 20px;"></p>
+                    <button class="btn-restart" onclick="restartQuiz()">Play Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fly Game -->
+        <div class="card">
+            <h2>🪰 Catch the Swamp Flies!</h2>
+            <div class="fly-game">
+                <p class="fly-instructions">Click the fly as many times as you can!</p>
+                <div class="fly-emoji" onclick="catchFly()">🪰</div>
+                <div class="fly-score">Flies Caught: <span id="fly-count">0</span></div>
+            </div>
+        </div>
+
+        <!-- Memory Game -->
+        <div class="card">
+            <h2>🎮 Shrek Memory Match</h2>
+            <div class="memory-score">Matches Found: <span id="memory-score">0</span>/8</div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <div style="text-align: center;">
+                <button class="btn-restart" onclick="resetMemoryGame()">Reset Game</button>
+            </div>
+        </div>
+
+        <!-- Catch Phrases -->
+        <div class="card">
+            <h2>💬 Iconic Catch Phrases</h2>
+            <div class="grid grid-3" id="phrases-container"></div>
+        </div>
+
+        <!-- Facts Section -->
+        <div class="grid grid-3">
+            <div class="fact-card">
+                <h3>🧅 Ogre Facts</h3>
+                <p>"Ogres are like onions — they have layers!" This iconic quote is the heart of Shrek's philosophy about the complexity beneath the surface.</p>
+            </div>
+
+            <div class="donkey-card">
+                <h3>🫏 Donkey Facts</h3>
+                <p>"I'm a talker, it's what I do!" Donkey's endless chatter and optimism brings joy to Shrek's lonely swamp and becomes his best friend.</p>
+            </div>
+
+            <div class="fact-card">
+                <h3>🏰 Shrek's World</h3>
+                <p>Far Far Away is a magical kingdom filled with fairytale creatures, adventure, and the greatest love story ever told through layers of humor and heart.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            ⭐ May your swamp adventures be legendary! ⭐
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const songs = [
+            { title: "All Star", artist: "Smash Mouth", lyric: "Somebody once told me the world is gonna roll me..." },
+            { title: "I'm a Believer", artist: "Smash Mouth", lyric: "Then I saw her face, now I'm a believer!" },
+            { title: "Hallelujah", artist: "Rufus Wainwright", lyric: "Maybe there's a God above..." },
+            { title: "Funkytown", artist: "Lipps Inc.", lyric: "Gotta make a move to a town that's right for me..." }
+        ];
+
+        const quizQuestions = [
+            { question: "What is the name of Shrek's loyal companion?", options: ["Dragon", "Donkey", "Puss in Boots", "Farquaad"], answer: "Donkey" },
+            { question: "Where does Shrek live?", options: ["Castle", "Swamp", "Village", "Tower"], answer: "Swamp" },
+            { question: "Who is Princess Fiona secretly?", options: ["A witch", "An ogre", "A fairy", "A dragon"], answer: "An ogre" },
+            { question: "What does Shrek say ogres are like?", options: ["Cakes", "Parfaits", "Onions", "Waffles"], answer: "Onions" },
+            { question: "What is Lord Farquaad's main goal?", options: ["Save Princess", "Find Donkey", "Rule the Kingdom", "Become an ogre"], answer: "Save Princess" }
+        ];
+
+        const catchPhrases = [
+            { character: "🧅 Shrek", phrase: "\"I'm a big, bad ogre. It's what I do!\"" },
+            { character: "🫏 Donkey", phrase: "\"I'm a talker, it's what I do!\"" },
+            { character: "🧅 Shrek", phrase: "\"Ogres are like onions. They have layers.\"" },
+            { character: "🫏 Donkey", phrase: "\"Can I ask you something? Do you think Fiona likes... parfaits?\"" },
+            { character: "🧅 Shrek", phrase: "\"Out of the swamp! Now!\"" },
+            { character: "🐱 Puss in Boots", phrase: "\"Excuse me, but a true hero doesn't need to hear cheers!\"" },
+            { character: "🫏 Donkey", phrase: "\"I'm gonna help you get that princess back!\"" },
+            { character: "🧅 Shrek", phrase: "\"That'll do, Donkey. That'll do.\"" },
+            { character: "👰 Fiona", phrase: "\"I don't think Lord Farquaad likes to be messed with.\"" },
+            { character: "🫏 Donkey", phrase: "\"SOMEBODY ONCE TOLD ME...\"" }
+        ];
+
+        const memoryPairs = ['🧅', '🫏', '👰', '🏰', '🐉', '🐱', '💚', '⭐'];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initSongs();
+            initQuiz();
+            initPhrases();
+            initMemoryGame();
+        });
+
+        // Songs
+        function initSongs() {
+            const container = document.getElementById('songs-container');
+            songs.forEach(song => {
+                const songDiv = document.createElement('div');
+                songDiv.className = 'song-item';
+                songDiv.innerHTML = `
+                    <div class="song-title">🎵 ${song.title}</div>
+                    <div class="song-artist">by ${song.artist}</div>
+                    <div class="song-lyric">"${song.lyric}"</div>
+                `;
+                container.appendChild(songDiv);
+            });
+        }
+
+        // Quiz
+        let currentQuestion = 0;
+        let score = 0;
+
+        function initQuiz() {
+            document.getElementById('total-questions').textContent = quizQuestions.length;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = quizQuestions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'btn-answer';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsDiv.appendChild(button);
+            });
+            document.getElementById('message').textContent = '';
+        }
+
+        function checkAnswer(selected) {
+            const correct = quizQuestions[currentQuestion].answer;
+            const messageDiv = document.getElementById('message');
+            if (selected === correct) {
+                score++;
+                messageDiv.textContent = '✅ Correct! Donkey approves! 🫏';
+                messageDiv.className = 'message correct';
+            } else {
+                messageDiv.textContent = '❌ Wrong! Lord Farquaad is disappointed! 😤';
+                messageDiv.className = 'message wrong';
+            }
+            document.getElementById('options').style.pointerEvents = 'none';
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < quizQuestions.length) {
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz').classList.remove('active');
+            document.getElementById('quiz-results').classList.add('active');
+            document.getElementById('final-score').textContent = score;
+            
+            let message = '';
+            if (score === quizQuestions.length) {
+                message = '🏆 Perfect! You are the true ruler of the swamp! 👑';
+            } else if (score >= quizQuestions.length * 0.75) {
+                message = '🎉 Excellent! You know your Shrek!';
+            } else if (score >= quizQuestions.length * 0.5) {
+                message = '✨ Good effort! Time for a movie marathon!';
+            } else {
+                message = '🤔 You need to rewatch the movies!';
+            }
+            document.getElementById('score-message').textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz').classList.add('active');
+            document.getElementById('quiz-results').classList.remove('active');
+            loadQuestion();
+        }
+
+        // Fly Game
+        let flyCount = 0;
+
+        function catchFly() {
+            flyCount++;
+            document.getElementById('fly-count').textContent = flyCount;
+            const flyEmoji = document.querySelector('.fly-emoji');
+            flyEmoji.style.transform = `scale(${1 + Math.random() * 0.3}) rotate(${Math.random() * 20}deg)`;
+            setTimeout(() => {
+                flyEmoji.style.transform = '';
+            }, 100);
+        }
+
+        // Catch Phrases
+        function initPhrases() {
+            const container = document.getElementById('phrases-container');
+            catchPhrases.forEach(phrase => {
+                const card = document.createElement('div');
+                card.className = 'phrase-card';
+                card.innerHTML = `
+                    <div class="phrase-character">${phrase.character}</div>
+                    <div class="phrase-text">${phrase.phrase}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Memory Game
+        let memoryCards = [];
+        let flipped = [];
+        let matched = 0;
+
+        function initMemoryGame() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            memoryCards = [...memoryPairs, ...memoryPairs].sort(() => Math.random() - 0.5);
+            flipped = Array(memoryCards.length).fill(false);
+            matched = 0;
+            document.getElementById('memory-score').textContent = '0';
+
+            memoryCards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'memory-card';
+                cardEl.textContent = '?';
+                cardEl.onclick = () => flipCard(index, cardEl);
+                grid.appendChild(cardEl);
+            });
+        }
+
+        function flipCard(index, element) {
+            if (flipped[index] || flipped.filter(Boolean).length >= 2) return;
+            
+            flipped[index] = true;
+            element.textContent = memoryCards[index];
+            element.classList.add('flipped');
+
+            const flippedCount = flipped.filter(Boolean).length;
+            if (flippedCount === 2) {
+                const indices = flipped.map((f, i) => f ? i : -1).filter(i => i !== -1);
+                if (memoryCards[indices[0]] === memoryCards[indices[1]]) {
+                    matched++;
+                    document.getElementById('memory-score').textContent = matched;
+                    flipped = Array(memoryCards.length).fill(false);
+                } else {
+                    setTimeout(() => {
+                        const cards = document.querySelectorAll('.memory-card');
+                        cards[indices[0]].textContent = '?';
+                        cards[indices[0]].classList.remove('flipped');
+                        cards[indices[1]].textContent = '?';
+                        cards[indices[1]].classList.remove('flipped');
+                        flipped = Array(memoryCards.length).fill(false);
+                    }, 1000);
+                }
+            }
+        }
+
+        function resetMemoryGame() {
+            initMemoryGame();
+        }
+    </script>
+</body>
+</html>

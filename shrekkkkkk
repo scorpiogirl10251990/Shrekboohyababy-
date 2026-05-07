@@ -159,7 +159,7 @@ export default function ShrekInteractiveWebsite() {
 
             <div className="text-3xl font-black text-green-900">
               Fly Score: {clickScore}
-            </div>
+            </div>d
           </div>
         </section>
 
