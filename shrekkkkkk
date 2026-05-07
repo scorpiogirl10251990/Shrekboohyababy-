@@ -1,0 +1,176 @@
+export default function ShrekInteractiveWebsite() {
+  const songs = [
+    {
+      title: "All Star",
+      artist: "Smash Mouth",
+      lyric: "Somebody once told me the world is gonna roll me..."
+    },
+    {
+      title: "I'm a Believer",
+      artist: "Smash Mouth",
+      lyric: "Then I saw her face, now I'm a believer!"
+    },
+    {
+      title: "Hallelujah",
+      artist: "Rufus Wainwright",
+      lyric: "Maybe there's a God above..."
+    }
+  ];
+
+  const quizQuestions = [
+    {
+      question: "What is the name of Shrek's loyal companion?",
+      options: ["Dragon", "Donkey", "Puss in Boots", "Farquaad"],
+      answer: "Donkey"
+    },
+    {
+      question: "Where does Shrek live?",
+      options: ["Castle", "Swamp", "Village", "Tower"],
+      answer: "Swamp"
+    },
+    {
+      question: "Who is Princess Fiona secretly?",
+      options: ["A witch", "An ogre", "A fairy", "A dragon"],
+      answer: "An ogre"
+    }
+  ];
+
+  const [currentQuestion, setCurrentQuestion] = React.useState(0);
+  const [score, setScore] = React.useState(0);
+  const [showResults, setShowResults] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+  const [clickScore, setClickScore] = React.useState(0);
+
+  const handleAnswer = (option) => {
+    if (option === quizQuestions[currentQuestion].answer) {
+      setScore(score + 1);
+      setMessage("Correct! Donkey approves 🫏");
+    } else {
+      setMessage("Wrong! Lord Farquaad is disappointed 😤");
+    }
+
+    setTimeout(() => {
+      setMessage("");
+      if (currentQuestion + 1 < quizQuestions.length) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setShowResults(true);
+      }
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-green-200 to-lime-500 text-gray-900 p-6 font-sans">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <header className="text-center space-y-4">
+          <h1 className="text-6xl font-black text-green-900 drop-shadow-lg">
+            🧅 Welcome to Shrek's Swamp 🧅
+          </h1>
+          <p className="text-xl font-medium">
+            Interactive quizzes, music, and swampy games inspired by the legendary ogre.
+          </p>
+        </header>
+
+        <section className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white/80 backdrop-blur rounded-3xl shadow-2xl p-6 space-y-4 border-4 border-green-700">
+            <h2 className="text-3xl font-bold text-green-800">🎤 Swamp Karaoke</h2>
+            <div className="space-y-4">
+              {songs.map((song, index) => (
+                <div
+                  key={index}
+                  className="bg-lime-100 rounded-2xl p-4 shadow hover:scale-105 transition"
+                >
+                  <h3 className="text-xl font-bold">{song.title}</h3>
+                  <p className="italic">by {song.artist}</p>
+                  <p className="mt-2">“{song.lyric}”</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur rounded-3xl shadow-2xl p-6 border-4 border-green-700">
+            <h2 className="text-3xl font-bold text-green-800 mb-4">🧠 Ogre Quiz</h2>
+
+            {!showResults ? (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">
+                  {quizQuestions[currentQuestion].question}
+                </h3>
+
+                <div className="grid gap-3">
+                  {quizQuestions[currentQuestion].options.map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => handleAnswer(option)}
+                      className="bg-green-700 hover:bg-green-900 text-white font-bold py-3 rounded-xl transition"
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+
+                {message && (
+                  <div className="text-lg font-bold text-center animate-pulse">
+                    {message}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center space-y-4">
+                <h3 className="text-4xl font-black text-green-900">
+                  Final Score: {score}/{quizQuestions.length}
+                </h3>
+                <p className="text-xl">
+                  {score === quizQuestions.length
+                    ? "You are the true ruler of the swamp! 👑"
+                    : "Not bad, but Donkey thinks you need another movie marathon."}
+                </p>
+                <button
+                  onClick={() => {
+                    setCurrentQuestion(0);
+                    setScore(0);
+                    setShowResults(false);
+                  }}
+                  className="bg-yellow-400 hover:bg-yellow-500 px-6 py-3 rounded-2xl font-bold text-lg shadow-lg"
+                >
+                  Play Again
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="bg-white/80 backdrop-blur rounded-3xl shadow-2xl p-6 border-4 border-green-700">
+          <h2 className="text-3xl font-bold text-green-800 mb-4">
+            🪰 Catch the Swamp Flies Game
+          </h2>
+
+          <div className="text-center space-y-6">
+            <p className="text-xl">
+              Click the fly as many times as possible!
+            </p>
+
+            <div
+              onClick={() => setClickScore(clickScore + 1)}
+              className="text-8xl cursor-pointer hover:scale-125 transition-transform select-none"
+            >
+              🪰
+            </div>
+
+            <div className="text-3xl font-black text-green-900">
+              Fly Score: {clickScore}
+            </div>
+          </div>
+        </section>
+
+        <section className="grid md:grid-cols-3 gap-6">
+          <div className="bg-yellow-100 rounded-3xl p-6 shadow-xl border-2 border-yellow-500">
+            <h3 className="text-2xl font-bold mb-2">🧅 Ogre Facts</h3>
+            <p>
+              Ogres are like onions — they have layers! This became one of the most iconic movie quotes ever.
+            </p>
+          </div>
+
+          <div className="bg-pink-100 rounded-3xl p-6 shadow-xl border-2 border-pink-500">
+            <h3 className="text-2xl font-bol
+        
